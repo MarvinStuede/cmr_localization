@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @file   rtabmap_offline.launch
+ * @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+ * @date   05/2020
+ *
+ * @brief  Launches RTAB-Map offline (Rosbag required)
+ */
+-->
+
+<launch>
+      <arg name= "database_path" default="~/.ros/rtabmap.db"/>
+      <arg name= "delete_db_on_start" default="false"/>
+      <arg name= "long_range" default="false"/>
+      <arg name="localization" default="false"/>
+      <arg name= "use_db_arg" default="true"/>
+
+      <include file="$(find cmr_localization)/launch/rtabmap.launch">
+           <arg name="use_db_arg" value="$(arg use_db_arg)"/>
+       	   <arg name= "delete_db_on_start" value="$(arg delete_db_on_start)"/>
+	   <arg name="use_sim_time"           value="true" />
+  	   <arg name="back_rgbd_short"     value="/cam_back/rgbd_image"/>
+  	   <arg name="front_rgbd_short"       value="/cam_front/rgbd_image"/>
+  	   <arg name="back_rgbd_long"     value="/cam_back/rgbd_velo"/>
+  	   <arg name="front_rgbd_long"       value="/cam_front/rgbd_velo"/>
+	   <arg name="long_range"   	value="$(arg long_range)"/>
+	   <arg name="localization"  	value="$(arg localization)"/>
+  	   <arg name="republish_short"   default="false"/>
+  	   <arg name="republish_long"   default="false"/>
+      </include>
+
+</launch>

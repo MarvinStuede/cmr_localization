@@ -1,0 +1,43 @@
+image: osrf/ros:kinetic-desktop-full-xenial
+
+variables:
+  WSTOOL_RECURSIVE: "true"
+  #ROS_PACKAGES_TO_INSTALL: "topological-utils topological-rviz-tools spencer-tracking-msgs"
+  PKGS: 'cmr_localization'
+
+before_script:
+ - echo "Adding SSH key..."
+ - curl -s http://lcas.lincoln.ac.uk/repos/public.key | apt-key add -
+ - apt-get update -y && apt-get install openssh-client software-properties-common wget libproj-dev -y
+ - apt-add-repository http://lcas.lincoln.ac.uk/ubuntu/main
+ - apt-get update -y
+ - apt-get install ros-kinetic-spencer-tracking-msgs ros-kinetic-topological-navigation ros-kinetic-scitos-teleop ros-kinetic-strands-morse -y
+ - eval $(ssh-agent -s)
+ - mkdir -p ~/.ssh
+ - chmod 700 ~/.ssh
+ - touch ~/.ssh/known_hosts
+ - chmod 600 ~/.ssh/known_hosts
+ - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+ - ssh-keyscan gitlab.projekt.uni-hannover.de | tee -a ~/.ssh/known_hosts
+ - git clone https://gitlab.com/VictorLamoine/ros_gitlab_ci.git
+ - source ros_gitlab_ci/gitlab-ci.bash >/dev/null
+ - source src/cmr_localization/cmr_localization/scripts/install_dependencies.sh
+ - cd ${CI_PROJECT_DIR}/catkin_workspace
+
+cache:
+  paths:
+    - ccache/
+
+#catkin_tools:
+#  stage: build
+#  script:
+#    - pwd
+#    - touch src/realsense/realsense2_camera/CATKIN_IGNORE
+#    - catkin build --summarize --no-status --force-color --cmake-args -DRTABMAP_SYNC_MULTI_RGBD=true
+
+catkin tools_tests:
+  stage: test
+  script:
+    - catkin build --force-color --cmake-args -DRTABMAP_SYNC_MULTI_RGBD=true -DDOWNLOAD_BAG_DATA=true
+    - catkin build --verbose --force-color $PKGS --no-deps --catkin-make-args run_tests
+    - catkin_test_results # Check if one of the tests failed!

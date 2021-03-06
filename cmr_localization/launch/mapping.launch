@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @file   mapping.launch
+ * @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+ * @date   05/2020
+ *
+ * @brief  Launches Mapping Nodes
+ */
+-->
+
+<launch>
+  <arg name="offline" default="false" doc="If true, start offline mode using sim time"/>
+
+  <include file="$(find cmr_lidarloop)/launch/cmr_lidarloop.launch">
+    <arg name="mapping" value="true"/>
+  </include>
+
+  <include if="$(arg offline)" file="$(find cmr_localization)/launch/rtabmap_offline.launch">
+      <arg name="database_path" value="~/.ros/rtabmap.db"/>
+      <arg name="delete_db_on_start" value="true"/>
+  </include>
+
+  <include unless="$(arg offline)" file="$(find cmr_localization)/launch/rtabmap.launch">
+        <arg name="database_path" value="~/.ros/rtabmap.db"/>
+  </include>
+</launch>

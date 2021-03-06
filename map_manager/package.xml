@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+/* *****************************************************************
+ *
+ * map_manager
+ *
+ * Copyright (c) 2019
+ * Institute of Mechatronic Systems,
+ * Leibniz Universitaet Hannover.
+ * (BSD License)
+ * All rights reserved.
+ *
+ * http://www.imes.uni-hannover.de
+ *
+ * This software is distributed WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.
+ *
+ * For further information see http://www.linfo.org/bsdlicense.html
+ *
+ ******************************************************************/
+
+/**
+ * @file   package.xml
+ * @author Simon Ehlers (simon.ehlers@stud.uni-hannover.de)
+ * @date   24.07.2019
+ *
+ * @brief  package xml for ROS-package map_manager
+ */
+-->
+
+<package format="2">
+  <name>map_manager</name>
+  <version>0.1.0</version>
+  <description>The map_manager package</description>
+
+  <maintainer email="simon.ehlers@stud.uni-hannover.de">ehlers</maintainer>
+
+  <license>BSD</license>
+  <author email="simon.ehlers@stdu.uni-hannover.de">ehlers</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>cmr_os</depend>
+  <build_depend>message_generation</build_depend>
+  <depend>roscpp</depend>
+  <depend>nodelet</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  <depend>mrpt_bridge</depend>
+  <depend>pose_cov_ops</depend>
+  <depend>libg2o</depend>
+
+  <exec_depend>message_runtime</exec_depend>
+
+  <export>
+	    <nodelet plugin="${prefix}/nodelet_plugins.xml" />
+  </export>
+
+</package>

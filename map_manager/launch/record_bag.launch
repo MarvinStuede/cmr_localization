@@ -1,0 +1,9 @@
+<!-- Launch for empty map and fake pose publishing for testing-->
+<launch>
+  <arg name="prefix" default="cmg_"/>
+	<node pkg="rosbag" type="record" name="rosbag_record_people" output="screen"
+		args="-o $(arg prefix) /tf /tf_static /velodyne_points /cam_back/color/image_rect_color/compressed /cam_back/color/camera_info /cam_back/aligned_depth_to_color/image_rect/compressedDepth /cam_front/color/image_rect_color/compressed /cam_front/color/camera_info /cam_front/aligned_depth_to_color/image_rect/compressedDepth /odometry/filtered /base/laser/scan_filtered  "/>
+
+	<!--<node pkg="rosbag" type="record" name="rosbag_record_people" output="screen"
+		args="-o $(arg prefix) /tf /tf_static /velodyne_points_vel /cam_back/color/image_raw/compressed /cam_front/color/image_raw/compressed /cam_back/color/camera_info /cam_front/color/camera_info /cam_back/aligned_depth_to_color/image_raw/compressedDepth /cam_front/aligned_depth_to_color/image_raw/compressedDepth /odometry/filtered /base/laser/scan_filtered /cam_back/rgbd_sync_back/rgbd_image /cam_front/rgbd_sync_front/rgbd_image /cam_front/rgbd_sync_velodyne_front/rgbd_image /cam_back/rgbd_sync_velodyne_back/rgbd_image "/>-->
+</launch>

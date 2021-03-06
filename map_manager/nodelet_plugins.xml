@@ -1,0 +1,8 @@
+
+<library path="lib/libregister_velodyne_nodelet">
+	<class name="map_manager/RegisterVelodyne" type="map_manager::RegisterVelodyne" base_class_type="nodelet::Nodelet">
+	    <description>
+	    Nodelet to project a 3D lidar scan into a Depth image
+	     </description>
+ </class>
+</library>

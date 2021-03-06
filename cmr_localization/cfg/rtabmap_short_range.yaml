@@ -1,0 +1,11 @@
+#*
+#* @file   rtabmap_short_range.yaml
+#* @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+#* @date   05/2020
+#*
+#* @brief  RTAB-Map parameters with short range config (RGBD with Cam Data as Depth)
+#*
+
+Mem/STMSize: 40                              # increased to 30 to avoid adding too many loop closures on just seen locations
+Grid/RangeMax: 10
+Grid/MaxObstacleHeight: 1.7

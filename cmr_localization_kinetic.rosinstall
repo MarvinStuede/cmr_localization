@@ -1,0 +1,17 @@
+### ADDITIONAL LIBRARIES ###
+
+# RTAB Map: Localization
+# Use commit from 28.07.2020
+- git: {local-name: rtabmap_ros, uri: 'https://github.com/introlab/rtabmap_ros.git', version: ba3d75d9eee496452752f4adfd3c9de6c5f40357}
+
+# Topological navigation
+- git: {local-name: topological_navigation, uri: 'https://github.com/LCAS/topological_navigation.git'}
+
+
+### CMR Repositories ###
+# cmr_os
+- git: {local-name: cmr_os, uri: 'git@gitlab.projekt.uni-hannover.de:imes-projekt-cmg_roboter/cmr-code/cmr_os.git', version: master}
+
+# cmr_lidarloop
+- git: {local-name: cmr_lidarloop, uri: 'git@gitlab.projekt.uni-hannover.de:imes-projekt-cmg_roboter/cmr-code/cmr_lidarloop.git', version: master}
+

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @file   rtabmap.launch
+ * @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+ * @date   05/2020
+ *
+ * @brief  Launches Nodes in localization mode
+ */
+-->
+
+<launch>
+
+  <include file="$(find cmr_lidarloop)/launch/cmr_lidarloop.launch"/>
+
+  <include file="$(find cmr_localization)/launch/rtabmap.launch">
+      <arg name= "database_path" value="~/.ros/rtabmap.db"/>
+      <arg name="localization"   value="true"/>
+  </include>
+</launch>

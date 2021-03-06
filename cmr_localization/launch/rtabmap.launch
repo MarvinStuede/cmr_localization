@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @file   rtabmap.launch
+ * @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+ * @date   05/2020
+ *
+ * @brief  Launches RTAB-Map
+ */
+-->
+
+<launch>
+
+  <!-- Topics for RGBD images from front/back cameras and velodyne registered -->
+  <arg name="back_rgbd_short"     default="/cam_back/rgbd_image/compressed"/>
+  <arg name="front_rgbd_short"       default="/cam_front/rgbd_image/compressed"/>
+  <arg name="back_rgbd_long"     default="/cam_back/rgbd_velo"/>
+  <arg name="front_rgbd_long"       default="/cam_front/rgbd_velo"/>
+
+  <arg name="odom_topic"         default="/odometry/filtered"/>
+  <arg name="scan_topic"         default="/base/laser/scan_filtered"/>
+  <arg name="scan_cloud_topic"   default="/velodyne_points_vel"/>
+  <arg name="scan_descriptor_topic"   default="/cmr_lidarloop/scan_descriptor"/>
+
+  <arg name= "database_path" default="~/.ros/rtabmap.db"/>
+
+  <arg name="delete_db_on_start" default="false"/>
+
+  <arg name="use_db_arg" default="true" doc="Use the argument provided by database_path for the path. Set to false if you want to set a parameter for this elsewhere"/>
+
+
+  <!-- Localization mode -->
+  <arg name="localization"      default="false"/>
+
+  <!-- Use long range config (Velodyne depth image)-->
+  <arg name="long_range"      default="false"/>
+
+  <!-- Use sim time. Set to true for bag playback -->
+  <arg name="use_sim_time"   default="false"/>
+
+  <param name="use_sim_time" type="bool" value="$(arg use_sim_time)"/>
+
+  <!-- Start a relay node to decompress the RGBD images. Should be true for topics that are received compressed over the network or only availabe compressed (e.g. in bag file) -->
+  <!-- In this case, RGBD from the cameras is received via network, and RGBD from the velodyne is received from the same computer -->
+  <arg name="republish_short"   default="true"/>
+  <arg name="republish_long"   default="false"/>
+
+
+  <arg     if="$(arg delete_db_on_start)" name="rtabmap_args"  default="--delete_db_on_start"/>
+  <arg unless="$(arg delete_db_on_start)" name="rtabmap_args"  default=""/> <!--delete_db_on_cam_back_nodelet_managerstart -->
+
+
+  <!-- Create relay topics for RTAB Map. Make no change here! -->
+  <arg if="$(arg republish_short)" name="back_rgbd_short_relay"     default="$(arg back_rgbd_short)_relay"/>
+  <arg unless="$(arg republish_short)" name="back_rgbd_short_relay"     default="$(arg back_rgbd_short)"/>
+  <arg if="$(arg republish_short)" name="front_rgbd_short_relay"     default="$(arg front_rgbd_short)_relay"/>
+  <arg unless="$(arg republish_short)" name="front_rgbd_short_relay"     default="$(arg front_rgbd_short)"/>
+
+  <arg if="$(arg republish_long)" name="back_rgbd_long_relay"     default="$(arg back_rgbd_long)_relay"/>
+  <arg unless="$(arg republish_long)" name="back_rgbd_long_relay"     default="$(arg back_rgbd_long)"/>
+  <arg if="$(arg republish_long)" name="front_rgbd_long_relay"     default="$(arg front_rgbd_long)_relay"/>
+  <arg unless="$(arg republish_long)" name="front_rgbd_long_relay"     default="$(arg front_rgbd_long)"/>
+
+  <!-- Load Relay Nodes and RTAB Map in namespace-->
+  <group ns="rtabmap">
+
+    <!-- Loads common parameters -->>
+    <rosparam ns="rtabmap" file="$(find cmr_localization)/cfg/rtabmap_common.yaml" command="load" />
+
+    <!-- Loads params from long range config (registered Velodyne data) -->
+    <group if="$(arg long_range)">
+    	<rosparam ns="rtabmap" file="$(find cmr_localization)/cfg/rtabmap_long_range.yaml" command="load" />
+
+    	<!-- Setup RGBD Relay node for long range -->
+    	<group if="$(arg republish_long)">
+        <node name="rgbd_relay_long_back" type="rgbd_relay" pkg="rtabmap_ros">
+     			<remap from="rgbd_image"             to="$(arg back_rgbd_long)"/>
+    			<remap from="$(arg back_rgbd_long)"             to="$(arg back_rgbd_long_relay)"/>
+     			<param name="uncompress" type="string" value="true"/>
+    	 	</node>
+        <node name="rgbd_relay_long_front" type="rgbd_relay" pkg="rtabmap_ros">
+     			<remap from="rgbd_image"             to="$(arg front_rgbd_long)"/>
+    			<remap from="$(arg front_rgbd_long)"             to="$(arg front_rgbd_long_relay)"/>
+     			<param name="uncompress" type="string" value="true"/>
+    	 	</node>
+       	</group>
+    </group>
+
+    <!-- Loads params from short range config (RealSense depth data) -->
+    <group unless="$(arg long_range)">
+    	<rosparam ns="rtabmap" file="$(find cmr_localization)/cfg/rtabmap_short_range.yaml" command="load" />
+
+	<!-- Setup RGBD Relay node for short range -->
+	<group if="$(arg republish_short)">
+        	<node name="rgbd_relay_short_back" type="rgbd_relay" pkg="rtabmap_ros">
+ 			<remap from="rgbd_image"             to="$(arg back_rgbd_short)"/>
+			<remap from="$(arg back_rgbd_short)_relay"             to="$(arg back_rgbd_short_relay)"/>
+ 			<param name="uncompress" type="bool" value="true"/>
+	 	</node>
+        	<node name="rgbd_relay_short_front" type="rgbd_relay" pkg="rtabmap_ros">
+ 			<remap from="rgbd_image"             to="$(arg front_rgbd_short)"/>
+			<remap from="$(arg front_rgbd_short)_relay"             to="$(arg front_rgbd_short_relay)"/>
+ 			<param name="uncompress" type="bool" value="true"/>
+	 	</node>
+   	</group>
+    </group>
+
+    <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="$(arg rtabmap_args)">
+
+	    <remap from="scan"             to="$(arg scan_topic)"/>
+	    <remap from="scan_cloud"       to="$(arg scan_cloud_topic)"/>
+	    <remap from="scan_descriptor"  to="$(arg scan_descriptor_topic)"/>
+	    <remap if="$(arg long_range)" from="rgbd_image0"      to="$(arg back_rgbd_long_relay)"/>
+	    <remap if="$(arg long_range)" from="rgbd_image1"      to="$(arg front_rgbd_long_relay)"/>
+	    <remap unless="$(arg long_range)" from="rgbd_image0"      to="$(arg back_rgbd_short_relay)"/>
+	    <remap unless="$(arg long_range)" from="rgbd_image1"      to="$(arg front_rgbd_short_relay)"/>
+
+	    <!-- localization mode -->
+	    <param     if="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="false"/>
+	    <param unless="$(arg localization)" name="Mem/IncrementalMemory" type="string" value="true"/>
+	    <param name="Mem/InitWMWithAllNodes" type="string" value="$(arg localization)"/>
+	    <param if="$(arg use_db_arg)" name="database_path" type="string" value="$(arg database_path)"/>
+	    <!-- Generate a new DB with timestamp -->
+	    <param unless="$(arg use_db_arg)" name="database_path" type="string" command="$(find cmr_localization)/scripts/generate_db_name.py"/>
+
+    </node>
+
+  </group>
+
+
+</launch>

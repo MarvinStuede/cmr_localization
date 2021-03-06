@@ -1,0 +1,93 @@
+#* @file   rtabmap_common.yaml
+#* @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+#* @date   05/2020
+#*
+#* @brief  General RTAB-Map parameters
+#*
+
+# RTAB-Map's parameters: do "rosrun rtabmap rtabmap --params" to see the list of available parameters.
+# --- Basic Parameters ---
+frame_id: 'base_link'
+odom_frame_id: 'odom'
+wait_for_transform: true
+subscribe_rgb: false
+subscribe_rgbd: true
+subscribe_depth: false
+subscribe_scan: false
+subscribe_scan_cloud: false                # if true RTAB-Map subscribes directly to the laser scanner
+subscribe_scan_descriptor: true            # if true RTAB-Map subscribes to the scan descriptor provided by cmr_lidarloop (point cloud with corresponding lidar features)
+
+rgbd_cameras: 2
+rgb_cameras: 2
+
+rgb/image_transport: 'compressed'
+depth/image_transport: 'compressedDepth'
+
+
+Kp/MaxFeatures: 500                          # Maximum words per image (0=no maximum). Setting to -1 will disable features extraction, so disabling loop closure detection indirectly
+RGBD/Enabled: 'true'                         # should be true for metric mapping. When it is set to false, only appearance-based loop closure detection is done (without any metric information)
+RGBD/NeighborLinkRefining: 'true'            # Do odometry correction with consecutive laser scans
+RGBD/ProximityBySpace: 'true'               # Local loop closure detection (using estimated position) with locations in WM
+RGBD/ProximityByTime: 'false'                # Local loop closure detection with locations in STM
+RGBD/ProximityPathMaxNeighbors: 10           # Do also proximity detection by space by merging close scans together.
+RGBD/SavedLocalizationIgnored: 'true'        #Ignore last saved localization pose from previous session.
+RGBD/LocalImmunizationRatio: 0.8
+Reg/Strategy: 1                              # 0=Visual, 1=ICP, 2=Visual+ICP
+RGBD/OptimizeFromGraphEnd: 'false'           # Optimize graph from end node so /map -> /odom transform will be kept constant to avoid jumps. Instead the map position is corrected.
+RGBD/OptimizeMaxError: 4.0                   # Reject any loop closure causing large errors (>2x link's covariance) in the map
+RGBD/MaxLoopClosureDistance: 20
+Reg/Force3DoF: 'true'                        # 2D SLAM
+Grid/FromDepth: 'false'                      # Create 2D occupancy grid from laser scan
+RGBD/LocalRadius: 3                         # limit length of proximity detections
+RGBD/ProximityPathMaxNeighbors: 1
+RGBD/LoopClosureReextractFeatures: 'true'    # [Extract features even if there are some already in the nodes.]
+RGBD/MaxOdomCacheSize: 15
+
+Grid/RayTracing: 'true'
+Grid/NormalsSegmentation: 'true'
+Grid/FootprintHeight: 1.7
+Grid/FootprintLength: 0.85
+Grid/FootprintWidth: 0.7
+Grid/ScanDecimation: 1
+GridGlobal/FullUpdate: true
+GridGlobal/Eroded: true
+GridGlobal/OccupancyThr: 0.5
+Grid/RangeMin: 0.5
+
+
+Vis/CorGuessWinSize: 0                      # [Vis/CorType=0] Matching window size (pixels) around projected points when a guess transform is provided to find correspondences. 0 means disabled.
+Vis/CorNNDR: 0.8                             # [Vis/CorType=0] NNDR: nearest neighbor distance ratio. Used for features matching approach.
+Vis/CorNNType: 1                             # [Vis/CorType=0] kNNFlannNaive=0, kNNFlannKdTree=1, kNNFlannLSH=2, kNNBruteForce=3, kNNBruteForceGPU=4. Used for features matching approach.
+Vis/CorType: 0                               # Correspondences computation approach: 0=Features Matching, 1=Optical Flow
+Vis/EstimationType: 1                        # Motion estimation approach: 0:3D->3D, 1:3D->2D (PnP), 2:2D->2D (Epipolar Geometry)
+Vis/FeatureType: 10                          # 0=SURF 1=SIFT 2=ORB 3=FAST/FREAK 4=FAST/BRIEF 5=GFTT/FREAK 6=GFTT/BRIEF 7=BRISK 8=GFTT/ORB 9=KAZE 10=ORB-OCTREE.
+Kp/DetectorStrategy: 10                      # 2=ORB 8=GFTT-ORB 10=ORB-OCTREE.
+Vis/MaxDepth: 0                              # [Max depth of the features (0 means no limit).]
+Vis/MinDepth: 0                              #[Min depth of the features (0 means no limit).]
+Vis/DepthAsMask: true                        # Use depth image as mask when extracting features
+Vis/MinInliers: 40                           # [Minimum feature correspondences to compute/accept the transformation.]
+
+Rtabmap/SaveWMState: true                    # [Save working memory state after each update in statistics.]
+
+# ---  ICP parameters  ---
+Icp/VoxelSize: 0.2
+Icp/PointToPlaneK: 20
+Icp/PointToPlaneRadius: 0
+Icp/PointToPlane: true
+Icp/Iterations: 10
+Icp/Epsilon: 0.001
+Icp/MaxTranslation: 3
+Icp/MaxCorrespondenceDistance: 1
+Icp/PM: true
+Icp/PMOutlierRatio: 0.7
+Icp/CorrespondenceRatio: 0.1
+
+
+Optimizer/Strategy: 2                         # Use GTSAM
+Optimizer/Robust: false
+Vis/EstimationType: 0                         # should be 0 for multi-cameras
+Rtabmap/TimeThr: 0                          # Maximum time allowed for map update (ms) (0 means infinity). When map update time exceeds this fixed time threshold, some nodes in
+                                              # Working Memory (WM) are transferred to Long-Term Memory to limit the size of the WM and decrease the update time.
+Mem/InitWMWithAllNodes: true
+Mem/SaveDepth16Format: false                   # Save depth image into 16 bits format to reduce memory used
+Grid/3D: false                                # A 3D occupancy grid is required if you want an OctoMap (3D ray tracing). Set to false if you want only a 2D map

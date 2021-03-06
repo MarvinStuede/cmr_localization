@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="env_map" default="$(find cmr_symbiotic_autonomy)/cfg/testmaps/hochhaus_blocked.yaml" />
+
+  <!-- MAP SERVER -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg env_map)">
+  </node>
+
+    <!-- AMCL Node -->
+  <node pkg="amcl" type="amcl" name="amcl">
+
+    <remap from="/scan" to="/velodyne_laserscan" />
+
+    <rosparam file="$(find cmr_navigation)/cfg/amcl_basic.yaml" command="load" />
+
+ </node>
+ <node pkg="robot_pose_publisher" type="robot_pose_publisher" respawn="false" name="robot_pose_publisher" output="screen"/>
+
+
+</launch>

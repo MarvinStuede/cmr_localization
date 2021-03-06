@@ -1,0 +1,12 @@
+#*
+#* @file   rtabmap_long_range.yaml
+#* @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+#* @date   05/2020
+#*
+#* @brief  RTAB-Map parameters with long range config (RGBD with LiDAR Data as depth)
+#*
+
+
+Mem/STMSize: 60                              # increased to 60 to avoid adding too many loop closures on just seen locations
+Grid/RangeMax: 50
+Grid/MaxObstacleHeight: 3.5

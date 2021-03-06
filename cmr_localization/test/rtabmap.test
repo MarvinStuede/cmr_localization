@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @file   rtabmap.test
+ * @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+ * @date   05/2020
+ *
+ * @brief  Does publish and HZ tests for RGBD Sync and RTABMap mapping
+ */
+-->
+
+<launch>
+  <include file="$(find cmr_lidarloop)/launch/cmr_lidarloop.launch"/>
+
+  <include file="$(find cmr_localization)/launch/rtabmap_offline.launch">
+    <arg name="use_db_arg" value="false"/>
+    <arg name="delete_db_on_start" value="false"/>
+  </include>
+
+  <!--<include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
+    <arg name="time" value="1" />
+    <arg name="pkg" value="cmr_localization" />
+    <arg name="file" value="bag_play.launch" />
+    <arg name="value" value="file:=$(find cmr_localization)/test/cmg_imes_flur_test_u.bag" />
+  </include>-->
+
+  <include file="$(find cmr_driver)/launch/bag/bag_play.launch">
+    <arg name="file" value="$(find cmr_localization)/test/cmg_imes_flur_test_u.bag"/>
+  </include>
+
+  <test test-name="test_rtabmap" pkg="cmr_localization" type="test_rtabmap" />
+
+  <test test-name="publishtest_data" pkg="rostest" type="publishtest">
+  <rosparam>
+    topics:
+      - name: /velodyne_points_vel
+        timeout: 60
+        negative: False
+      - name: /cam_front/color/image_rect_color/compressed
+        timeout: 60
+        negative: False
+      - name: /cam_back/color/image_rect_color/compressed
+        timeout: 60
+        negative: False
+  </rosparam>
+  </test>
+
+<arg name="hz_error"       default="5.0"/>
+<arg name="hz_duration"       default="15.0"/>
+<arg name="hz_wait"       default="20.0"/>
+<test test-name="hztest_rgbd_front" pkg="rostest" type="hztest" >
+  <rosparam  subst_value="true">
+     topic: /cam_front/rgbd_image
+     hz: 22.0
+     hzerror: $(arg hz_error)
+     test_duration: $(arg hz_duration)
+     wait_time: $(arg hz_wait)
+  </rosparam>
+  </test>
+<test test-name="hztest_rgbd_back" pkg="rostest" type="hztest" >
+  <rosparam  subst_value="true">
+     topic: /cam_back/rgbd_image
+     hz: 22.0
+     hzerror: $(arg hz_error)
+     test_duration: $(arg hz_duration)
+     wait_time: $(arg hz_wait)
+    </rosparam>
+  </test>
+  <!-- Commented because of missing values in bagfile -->
+<!--  <test test-name="hztest-rgbd-velo-front" pkg="rostest" type="hztest" name="hztest-rgbd-velo-front" >
+    <rosparam  subst_value="true">
+       topic: /cam_front/rgbd_velo
+       hz: 6.0
+       hzerror: 1.0
+       test_duration: $(arg hz_duration)
+       wait_time: $(arg hz_wait)
+    </rosparam>
+  </test>-->
+  <test test-name="hztest_rgbd_velo_back" pkg="rostest" type="hztest">
+    <rosparam  subst_value="true">
+       topic: /cam_back/rgbd_velo
+       hz: 6.0
+       hzerror: 1.0
+       test_duration: $(arg hz_duration)
+       wait_time: $(arg hz_wait)
+    </rosparam>
+  </test>
+
+  <test test-name="publishtest_rtabmap" pkg="rostest" type="publishtest">
+  <rosparam>
+    topics:
+      - name: /rtabmap/grid_map
+        timeout: 60
+        negative: False
+      - name: /rtabmap/localization_pose
+        timeout: 60
+        negative: False
+  </rosparam>
+</test>
+
+</launch>

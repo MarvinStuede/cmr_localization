@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Image topic, use raw topic here-->
+  <arg name="img_topic"        default="/cam_front/color/image_raw"/>
+
+  <node name="in_out_classifier_node" pkg="cmr_cnn_classifier" type="in_out_classifier_node.py" output="screen">
+  	<param name="img_topic"   type="string" value="$(arg img_topic)"/>
+     <!--Either 'compressed' or 'raw' -->
+    <param name="img_transport" type="string" value="compressed"/>
+  </node>
+</launch>

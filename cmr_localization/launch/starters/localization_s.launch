@@ -1,0 +1,25 @@
+<!-- -*- mode: XML -*- -->
+
+<!--
+/**
+ * @file   rtabmap.launch
+ * @author Marvin Stüde (Marvin.Stuede@imes.uni-hannover.de)
+ * @date   05/2020
+ *
+ * @brief  Launches Nodes in localization mode
+ */
+-->
+
+<launch>
+
+  <!-- Shutdown RTABMAP -->
+  <node pkg="cmr_os" type="shutdown_node" name="rtabmap_shutdown" required="true"/>
+
+  <node pkg="robot_pose_publisher" type="robot_pose_publisher" name="robot_pose_publisher" respawn="true"/>
+
+  <include file="$(find cmr_lidarloop)/launch/cmr_lidarloop.launch"/>
+  <include file="$(find cmr_localization)/launch/rtabmap.launch">
+      <arg name= "database_path" value="~/.ros/rtabmap_imes_210225.db"/>
+      <arg name="localization"   value="true"/>
+  </include>
+</launch>
