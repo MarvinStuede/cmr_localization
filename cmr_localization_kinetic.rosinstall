@@ -10,8 +10,7 @@
 
 ### CMR Repositories ###
 # cmr_os
-- git: {local-name: cmr_os, uri: 'git@gitlab.projekt.uni-hannover.de:imes-projekt-cmg_roboter/cmr-code/cmr_os.git', version: master}
+- git: {local-name: cmr_os, uri: 'https://github.com/MarvinStuede/cmr_os.git', version: master}
 
 # cmr_lidarloop
-- git: {local-name: cmr_lidarloop, uri: 'git@gitlab.projekt.uni-hannover.de:imes-projekt-cmg_roboter/cmr-code/cmr_lidarloop.git', version: master}
-
+- git: {local-name: cmr_lidarloop, uri: 'https://github.com/MarvinStuede/cmr_lidarloop.git', version: master}
